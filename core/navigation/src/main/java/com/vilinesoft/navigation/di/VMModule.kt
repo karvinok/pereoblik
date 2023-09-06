@@ -1,0 +1,15 @@
+package com.vilinesoft.navigation.di
+
+import com.vilinesoft.documents.DocumentsViewModel
+import com.vilinesoft.handbook.HandbookViewModel
+import com.vilinesoft.home.HomeViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
+
+object VMModule {
+    fun get() = module {
+        viewModel { HomeViewModel() }
+        viewModel { HandbookViewModel(get(), get()) }
+        viewModel { DocumentsViewModel(get()) }
+    }
+}
