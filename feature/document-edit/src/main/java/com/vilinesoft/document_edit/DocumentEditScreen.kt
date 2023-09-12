@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun DocumentEditRoute(
+fun DocumentEditScreen(
     modifier: Modifier = Modifier,
     onCloseRequest: () -> Unit,
     viewModel: DocumentEditViewModel = koinViewModel()
@@ -36,14 +36,14 @@ fun DocumentEditRoute(
         viewModel.subscribeKeyEvents()
         onDispose(viewModel::unsubscribeKeyEvents)
     }
-    DocumentEditScreen(
+    DocumentEditContent(
         modifier = modifier.keyEventHandler(viewModel),
         state = uiState
     )
 }
 
 @Composable
-fun DocumentEditScreen(
+fun DocumentEditContent(
     modifier: Modifier = Modifier,
     state: DocumentEditContract.UIState
 ) {
@@ -60,7 +60,7 @@ fun DocumentEditScreen(
 @Composable
 fun DocumentEditPreview() {
     PereoblikTheme {
-        DocumentEditScreen(
+        DocumentEditContent(
             state = DocumentEditContract.UIState(mockedDocuments()[0]),
             modifier = Modifier,
         )

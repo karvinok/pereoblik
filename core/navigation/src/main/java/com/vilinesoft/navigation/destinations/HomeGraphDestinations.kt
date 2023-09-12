@@ -8,7 +8,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import androidx.navigation.navOptions
 import androidx.navigation.navigation
-import com.vilinesoft.document_edit.DocumentEditRoute
+import com.vilinesoft.document_edit.DocumentEditScreen
 import com.vilinesoft.documents.DocumentsScreen
 import com.vilinesoft.handbook.HandbookScreen
 import com.vilinesoft.home.HomeScreen
@@ -47,7 +47,7 @@ fun NavGraphBuilder.homeGraph(
                 defaultValue = null
             })
         ) {
-            DocumentEditRoute(onCloseRequest = navController::popBackStack)
+            DocumentEditScreen(onCloseRequest = navController::popBackStack)
         }
         nestedGraphs()
     }
