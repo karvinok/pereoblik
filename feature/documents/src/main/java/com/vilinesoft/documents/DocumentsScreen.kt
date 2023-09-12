@@ -35,8 +35,9 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun DocumentsRoute(
+fun DocumentsScreen(
     modifier: Modifier = Modifier,
+    onNavigateDocument: (id: String) -> Unit,
     viewModel: DocumentsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -48,12 +49,11 @@ fun DocumentsRoute(
                 is UIEffect.ShowToast -> {
                     Toast.makeText(context, it.text, Toast.LENGTH_SHORT).show()
                 }
-                UIEffect.NavigateSomewhere -> TODO()
+                is UIEffect.NavigateDocument -> onNavigateDocument(it.documentId)
             }
         }
     }
-
-    DocumentsScreen(
+    DocumentsContent(
         modifier = modifier,
         state = uiState,
         intentBlock = viewModel::handleIntent
@@ -61,7 +61,7 @@ fun DocumentsRoute(
 }
 
 @Composable
-fun DocumentsScreen(
+fun DocumentsContent(
     modifier: Modifier = Modifier,
     intentBlock: (UIIntent) -> Unit,
     state: UIState,
@@ -166,7 +166,7 @@ fun DocumentsList(
 @Composable
 fun PreviewDocumentsScreen() {
     PereoblikTheme {
-        DocumentsScreen(
+        DocumentsContent(
             state = UIState(
                 documents = mockedDocuments(),
                 //dialogState = CreateDocumentDialogState(),

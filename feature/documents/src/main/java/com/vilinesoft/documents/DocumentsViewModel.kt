@@ -70,8 +70,8 @@ class DocumentsViewModel(
 
     private fun onItemClick(index: Int) {
         updateState {
+            val mutableDocuments = documents.toMutableList()
             if (isActionMode) {
-                val mutableDocuments = documents.toMutableList()
                 mutableDocuments[index] = mutableDocuments[index].copy(
                     isSelected = !mutableDocuments[index].isSelected
                 )
@@ -80,7 +80,7 @@ class DocumentsViewModel(
                     documents = mutableDocuments
                 )
             } else {
-                //TODO navigate to document
+                postEffect(UIEffect.NavigateDocument(mutableDocuments[index].id))
                 this
             }
         }

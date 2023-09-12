@@ -12,13 +12,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vilinesoft.ui.components.Button
+import com.vilinesoft.ui.theme.PereoblikTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeRoute(
+fun HomeScreen(
     modifier: Modifier = Modifier,
     onHandbookClick: () -> Unit,
     onDocumentsClick: () -> Unit,
@@ -26,24 +28,22 @@ fun HomeRoute(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    HomeScreen(
+    HomeContent(
         modifier = modifier,
         onHandbookClick = onHandbookClick,
         onDocumentsClick = onDocumentsClick,
         onSettingsClick = onSettingsClick,
-        onDialogDismiss = viewModel::onDialogDismiss,
         state = uiState
     )
 }
 
 @Composable
-fun HomeScreen(
+fun HomeContent(
     modifier: Modifier = Modifier,
     onHandbookClick: () -> Unit,
-    onDocumentsClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
-    onDialogDismiss: () -> Unit = {},
-    state: HomeViewModel.State
+    onDocumentsClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    state: HomeContract.UIState
 ) {
     Box(modifier = modifier.background(
         color = MaterialTheme.colorScheme.background
@@ -73,5 +73,18 @@ fun HomeScreen(
                 onClick = onSettingsClick
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun HomePreview() {
+    PereoblikTheme {
+        HomeContent(
+            onHandbookClick = {},
+            onDocumentsClick = {},
+            onSettingsClick = {},
+            state = HomeContract.UIState(),
+        )
     }
 }

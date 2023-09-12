@@ -48,6 +48,10 @@ class MainRepositoryImpl(
         return dao.getAllDocuments().map(DocumentEntity::fromEntity)
     }
 
+    override suspend fun fetchDocumentById(documentId: String): Document {
+        return dao.getDocument(documentId).fromEntity()
+    }
+
     override suspend fun requestDocumentTypes(): List<DocumentType> {
         return listOf(
             DocumentType.PEREOB,

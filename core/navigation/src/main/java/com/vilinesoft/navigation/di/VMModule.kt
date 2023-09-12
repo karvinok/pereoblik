@@ -1,5 +1,6 @@
 package com.vilinesoft.navigation.di
 
+import com.vilinesoft.document_edit.DocumentEditViewModel
 import com.vilinesoft.documents.DocumentsViewModel
 import com.vilinesoft.handbook.HandbookViewModel
 import com.vilinesoft.home.HomeViewModel
@@ -11,5 +12,6 @@ object VMModule {
         viewModel { HomeViewModel() }
         viewModel { HandbookViewModel(get(), get()) }
         viewModel { DocumentsViewModel(get()) }
+        viewModel { DocumentEditViewModel(get(), get(), get()) }
     }
 }

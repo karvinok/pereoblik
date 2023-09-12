@@ -11,7 +11,7 @@ enum class TechKeyEvent {
     F2,
     F3,
     F4,
-
+    BACKPRESS,
     ;
 
     companion object {
@@ -23,6 +23,7 @@ enum class TechKeyEvent {
             Key.F2,
             Key.F3,
             Key.F4,
+            Key.Back,
             Key.Unknown
         )
 
@@ -35,6 +36,7 @@ enum class TechKeyEvent {
                 listOfKeys[4] -> F2
                 listOfKeys[5] -> F3
                 listOfKeys[6] -> F4
+                listOfKeys[7] -> BACKPRESS
                 else -> NONE
             }
         }

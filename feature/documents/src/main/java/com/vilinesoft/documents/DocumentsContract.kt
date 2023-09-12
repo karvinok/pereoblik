@@ -27,7 +27,7 @@ class DocumentsContract {
     }
 
     sealed class UIEffect {
-        data object NavigateSomewhere: UIEffect()
+        data class NavigateDocument(val documentId: String): UIEffect()
         data class ShowToast(val text: String): UIEffect()
     }
 

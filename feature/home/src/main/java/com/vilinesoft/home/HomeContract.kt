@@ -1,12 +1,9 @@
-package com.vilinesoft.handbook
+package com.vilinesoft.home
 
 import com.vilinesoft.domain.model.Good
 
-class HandbookContract {
+class HomeContract {
     data class UIState(
-        val good: Good? = null,
-        val loading: Boolean = false,
-        val notFound: Boolean = false,
         val barcode: String = "",
     )
 

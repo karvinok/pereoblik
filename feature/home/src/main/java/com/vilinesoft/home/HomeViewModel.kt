@@ -1,24 +1,15 @@
 package com.vilinesoft.home
 
-import androidx.lifecycle.ViewModel
-import com.vilinesoft.domain.model.Good
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.vilinesoft.home.HomeContract.UIEffect
+import com.vilinesoft.home.HomeContract.UIIntent
+import com.vilinesoft.home.HomeContract.UIState
+import com.vilinesoft.ui.BaseViewModel
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel : BaseViewModel<UIIntent, UIState, UIEffect>() {
 
-    private val _uiState: MutableStateFlow<State> = MutableStateFlow(State())
-    val uiState: StateFlow<State> get() = _uiState.asStateFlow()
+    override fun provideDefaultState() = UIState()
 
-    fun onDialogDismiss() {
-        _uiState.value = uiState.value.copy(
-            isDialogShowing = false
-        )
+    override fun handleIntent(intent: UIIntent) {
+
     }
-
-    data class State(
-        val isDialogShowing: Boolean = false,
-        val good: Good? = null
-    )
 }

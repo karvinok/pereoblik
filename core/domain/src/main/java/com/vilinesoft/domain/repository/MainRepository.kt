@@ -9,6 +9,7 @@ import com.vilinesoft.domain.model.Good
 interface MainRepository {
     suspend fun requestGood(barcode: String, docType: Int, storeCode: String?): Either<BaseError, Good>
     suspend fun fetchDocuments(): List<Document>
+    suspend fun fetchDocumentById(documentId: String): Document
     suspend fun sendDocuments(ids: List<String>): Either<BaseError, Unit>
     suspend fun requestDocumentTypes(): List<DocumentType>
     suspend fun saveDocument(document: Document): Either<BaseError, Unit>

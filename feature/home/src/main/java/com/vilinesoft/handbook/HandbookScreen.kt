@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,36 +31,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vilinesoft.domain.util.toDoubleString
+import com.vilinesoft.handbook.HandbookContract.*
 import com.vilinesoft.ui.components.Button
 import com.vilinesoft.ui.components.keyEventHandler
 import com.vilinesoft.ui.theme.FontSize
 import com.vilinesoft.ui.theme.LargeShape
 import com.vilinesoft.ui.theme.PereoblikTheme
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HandbookRoute(
+fun HandbookScreen(
     modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit,
+    onCloseRequest: () -> Unit,
     viewModel: HandbookViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.uiEffect.collectLatest {
+            when(it) {
+                is UIEffect.CloseScreen -> onCloseRequest()
+            }
+        }
+    }
     DisposableEffect(Unit) {
         viewModel.subscribeKeyEvents()
         onDispose(viewModel::unsubscribeKeyEvents)
     }
-
-    HandbookScreen(
+    HandbookContent(
         state = uiState,
         modifier = modifier.keyEventHandler(viewModel),
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onCloseRequest,
     )
 }
 
 @Composable
-fun HandbookScreen(
-    state: HandbookContract.UIState,
+fun HandbookContent(
+    state: UIState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -156,8 +165,8 @@ fun HandbookScreen(
 @Composable
 fun HandbookPreview() {
     PereoblikTheme {
-        HandbookScreen(
-            state = HandbookContract.UIState(),
+        HandbookContent(
+            state = UIState(),
             modifier = Modifier,
             onDismissRequest = {}
         )

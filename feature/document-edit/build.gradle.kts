@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.vilinesoft.navigation"
+    namespace = "com.vilinesoft.document_edit"
     compileSdk = DependenciesPlugin.compileSdkVersion
     compileOptions {
         sourceCompatibility = DependenciesPlugin.javaVersion
@@ -25,18 +25,9 @@ android {
 dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:domain"))
-    implementation(project(":feature:home"))
-    implementation(project(":feature:documents"))
-    implementation(project(":feature:document-edit"))
 
-    implementation(DependenciesPlugin.koinCore)
-    implementation(DependenciesPlugin.koinAndroid)
-
+    implementation(DependenciesPlugin.androidLifecycleViewModel)
+    implementation(DependenciesPlugin.koinComposeNavigation)
     implementation(DependenciesPlugin.navigationRuntime)
     implementation(DependenciesPlugin.navigationCompose)
-
-    implementation(platform(DependenciesPlugin.composeBom))
-    implementation(DependenciesPlugin.composeUi)
-    implementation(DependenciesPlugin.composeUiGraphics)
-    implementation(DependenciesPlugin.composeUiMaterial3)
 }
