@@ -26,3 +26,5 @@ include(":core:data")
 include(":feature:home")
 include(":feature:documents")
 include(":feature:document-edit")
+include(":feature:settings")
+

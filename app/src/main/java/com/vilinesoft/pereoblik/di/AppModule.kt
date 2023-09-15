@@ -1,6 +1,7 @@
 package com.vilinesoft.pereoblik.di
 
-import com.vilinesoft.pereoblik.CacheManager
+import com.vilinesoft.data.cache.CacheManagerImpl
+import com.vilinesoft.domain.repository.CacheManager
 import com.vilinesoft.pereoblik.PereoblikApplication
 import com.vilinesoft.ui.keyprocessing.KeyEventBus
 import org.koin.android.ext.koin.androidApplication
@@ -12,6 +13,6 @@ object AppModule {
 
         single { KeyEventBus() }
         single { androidApplication() as PereoblikApplication }
-        single { CacheManager(androidContext()) }
+        single<CacheManager> { CacheManagerImpl(androidContext()) }
     }
 }
