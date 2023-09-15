@@ -12,12 +12,14 @@ import com.vilinesoft.document_edit.DocumentEditScreen
 import com.vilinesoft.documents.DocumentsScreen
 import com.vilinesoft.handbook.HandbookScreen
 import com.vilinesoft.home.HomeScreen
+import com.vilinesoft.settings.SettingsScreen
 
 const val ROUTE_HOME_GRAPH = "route_home_graph"
 const val ROUTE_HOME = "route_home"
 const val ROUTE_HANDBOOK = "route_handbook"
 const val ROUTE_DOCUMENTS = "route_documents"
 const val ROUTE_DOCUMENT_EDIT = "route_document_edit"
+const val ROUTE_SETTINGS = "route_settings"
 
 fun NavGraphBuilder.homeGraph(
     navController: NavController,
@@ -31,7 +33,7 @@ fun NavGraphBuilder.homeGraph(
             HomeScreen(
                 onHandbookClick = navController::navigateToHandbook,
                 onDocumentsClick = navController::navigateToDocuments,
-                onSettingsClick = {}
+                onSettingsClick = navController::navigateToSettings
             )
         }
         dialog(route = ROUTE_HANDBOOK) {
@@ -39,6 +41,9 @@ fun NavGraphBuilder.homeGraph(
         }
         composable(route = ROUTE_DOCUMENTS) {
             DocumentsScreen(onNavigateDocument = navController::navigateToDocumentEdit)
+        }
+        composable(route = ROUTE_SETTINGS) {
+            SettingsScreen()
         }
         composable(
             route = "$ROUTE_DOCUMENT_EDIT/{document_id}",
@@ -71,4 +76,7 @@ fun NavController.navigateToDocuments(navOptions: NavOptions = DefaultNavOptions
 
 fun NavController.navigateToDocumentEdit(documentId: String, navOptions: NavOptions = DefaultNavOptions) {
     navigate("$ROUTE_DOCUMENT_EDIT/$documentId", navOptions)
+}
+fun NavController.navigateToSettings( navOptions: NavOptions = DefaultNavOptions) {
+    navigate("$ROUTE_SETTINGS", navOptions)
 }
