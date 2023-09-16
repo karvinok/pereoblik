@@ -10,11 +10,14 @@ import com.vilinesoft.data.network.remote.MainApi
 import com.vilinesoft.data.handleResponse
 import com.vilinesoft.domain.model.BaseError
 import com.vilinesoft.domain.model.Document
+import com.vilinesoft.domain.model.DocumentItem
 import com.vilinesoft.domain.model.DocumentType
 import com.vilinesoft.domain.model.Either
 import com.vilinesoft.domain.model.Good
+import com.vilinesoft.domain.model.GoodDto
 import com.vilinesoft.domain.repository.MainRepository
-import kotlinx.coroutines.delay
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 class MainRepositoryImpl(
     private val api: MainApi,
@@ -25,11 +28,9 @@ class MainRepositoryImpl(
         barcode: String,
         docType: Int,
         storeCode: String?,
-    ): Either<BaseError, Good> {
-        return handleResponse {
-            delay(250)
-//          api.requestGood(barcode, docType, storeCode)
-            Good(
+    ): GoodDto {
+        return GoodDto(
+            good = Good(
                 123,
                 "Водичка",
                 99.99,
@@ -40,16 +41,17 @@ class MainRepositoryImpl(
                 1,
                 5,
                 7
-            )
-        }
+            ),
+            status = 1
+        )
     }
 
-    override suspend fun fetchDocuments(): List<Document> {
-        return dao.getAllDocuments().map(DocumentEntity::fromEntity)
+    override suspend fun fetchDocuments(): ImmutableList<Document> {
+        return dao.getAllDocuments().map(DocumentEntity::fromEntity).toImmutableList()
     }
 
     override suspend fun fetchDocumentById(documentId: String): Document {
-        return dao.getDocument(documentId).fromEntity()
+        return dao.getDocumentWithItems(documentId).fromEntity()
     }
 
     override suspend fun requestDocumentTypes(): List<DocumentType> {
@@ -73,7 +75,7 @@ class MainRepositoryImpl(
 
     override suspend fun saveDocument(document: Document): Either<BaseError, Unit> {
         return handleResponse {
-            dao.addDocument(document.toEntity())
+            dao.insertDocument(document.toEntity())
         }
     }
 
@@ -103,4 +105,19 @@ class MainRepositoryImpl(
     override suspend fun getDocumentsCount(): Int {
         return dao.getDocumentsCount()
     }
+
+    override suspend fun saveItem(item: DocumentItem) {
+        dao.insertDocumentItem(item.toEntity())
+    }
+
+    override suspend fun fetchItemByBarcode(barcode: String, docId: String): DocumentItem? {
+        return try {
+            dao.getDocumentItemByBarcode(barcode, docId).fromEntity()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+
 }

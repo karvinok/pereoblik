@@ -28,7 +28,6 @@ class DependenciesPlugin : Plugin<Project> {
         const val androidLifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycleVersion}"
 
         const val navigationCommon = "androidx.navigation:navigation-common-ktx:${navigationVersion}"
-        const val navigationCommon2 = "androidx.navigation:navigation-common-ktx:${navigationVersion}"
         const val navigationRuntime = "androidx.navigation:navigation-runtime-ktx:${navigationVersion}"
         const val navigationCompose = "androidx.navigation:navigation-compose:${navigationVersion}"
 
@@ -39,6 +38,7 @@ class DependenciesPlugin : Plugin<Project> {
         const val activityCompose = "androidx.activity:activity-compose:1.7.2"
         const val composeBom = "androidx.compose:compose-bom:$composeBomVersion"
         const val composeUi = "androidx.compose.ui:ui"
+        const val composeRuntime = "androidx.compose.runtime:runtime:1.5.1"
         const val composeUiGraphics = "androidx.compose.ui:ui-graphics"
         const val composeUiMaterial3 = "androidx.compose.material3:material3"
         const val composeUiToolingPreview = "androidx.compose.ui:ui-tooling-preview"
@@ -47,12 +47,14 @@ class DependenciesPlugin : Plugin<Project> {
         //Data
         const val roomKsp = "androidx.room:room-compiler:$roomVersion"
         const val roomRuntime = "androidx.room:room-runtime:$roomVersion"
+        const val roomKtx = "androidx.room:room-ktx:$roomVersion"
 
         const val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
         const val retrofitSerialization = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$interceptorVersion"
         const val timber = "com.jakewharton.timber:timber:4.7.1"
         const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0-RC"
+        const val immutableCollections = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 
         const val tracing = "androidx.tracing:tracing-ktx:${tracingVersion}"
         const val test = "io.insert-koin:koin-test:${koinVersion}"

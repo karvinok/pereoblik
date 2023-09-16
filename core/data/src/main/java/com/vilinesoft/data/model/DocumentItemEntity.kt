@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.vilinesoft.domain.model.DocumentItem
 import kotlinx.parcelize.Parcelize
 
 @Keep
@@ -33,3 +34,29 @@ data class DocumentItemEntity(
     @ColumnInfo(name = "isNew")
     var isNew: Boolean = false,
 ) : Parcelable
+
+fun DocumentItemEntity.fromEntity() = DocumentItem(
+    id = id,
+    idDoc = idDoc,
+    codeGoods1C = codeGoods1C,
+    name = name,
+    barcode = barcode,
+    price = price,
+    qtyBalance = qtyBalance,
+    qtyFact = qtyFact,
+    unit = unit,
+    isNew = isNew
+)
+
+fun DocumentItem.toEntity() = DocumentItemEntity(
+    id = id,
+    idDoc = idDoc,
+    codeGoods1C = codeGoods1C,
+    name = name,
+    barcode = barcode,
+    price = price,
+    qtyBalance = qtyBalance,
+    qtyFact = qtyFact,
+    unit = unit,
+    isNew = isNew
+)

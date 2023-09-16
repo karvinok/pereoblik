@@ -35,9 +35,4 @@ dependencies {
 
     implementation(DependenciesPlugin.navigationRuntime)
     implementation(DependenciesPlugin.navigationCompose)
-
-    implementation(platform(DependenciesPlugin.composeBom))
-    implementation(DependenciesPlugin.composeUi)
-    implementation(DependenciesPlugin.composeUiGraphics)
-    implementation(DependenciesPlugin.composeUiMaterial3)
 }

@@ -15,7 +15,7 @@ class SettingsViewModel(private val manager: CacheManager):BaseViewModel<UIInten
     )
     override fun handleIntent(intent: SettingsContract.UIIntent) {
         when(intent){
-            is UIIntent.IpStringChanged -> updateState { copy(isCanChangeItemName = !) }
+            is UIIntent.IpStringChanged -> updateState { copy(isCanChangeItemName = false) }
             is UIIntent.PrefixChanged-> TODO()
             is UIIntent.CanCreateItemsClick -> TODO()
             is UIIntent.CanCreateItemWithoutBarcodeClick -> TODO()

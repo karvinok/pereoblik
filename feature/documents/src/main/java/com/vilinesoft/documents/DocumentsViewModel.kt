@@ -6,6 +6,7 @@ import com.vilinesoft.domain.model.Document
 import com.vilinesoft.domain.model.DocumentType
 import com.vilinesoft.domain.repository.MainRepository
 import com.vilinesoft.ui.BaseViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -17,7 +18,7 @@ class DocumentsViewModel(
     private val repository: MainRepository
 ) : BaseViewModel<UIIntent, UIState, UIEffect>() {
 
-    override fun provideDefaultState() = UIState(documents = listOf())
+    override fun provideDefaultState() = UIState()
 
     private var documentTypesLocal: List<DocumentType> = arrayListOf()
 
@@ -54,7 +55,7 @@ class DocumentsViewModel(
         updateState {
             if (isActionMode) {
                 val fetchedDocuments = repository.fetchDocuments()
-                copy(isActionMode = false, documents = fetchedDocuments)
+                copy(isActionMode = false, documents = fetchedDocuments.toImmutableList())
             } else {
                 if (documentTypesLocal.isEmpty()) {
                     requestDocumentTypes()
@@ -62,7 +63,7 @@ class DocumentsViewModel(
                 }
 
                 copy(dialogCreateDocState = CreateDocumentDialogState(
-                    documentTypes = documentTypesLocal
+                    documentTypes = documentTypesLocal.toImmutableList()
                 ))
             }
         }
@@ -77,7 +78,7 @@ class DocumentsViewModel(
                 )
                 copy(
                     isActionMode = mutableDocuments.any { it.isSelected },
-                    documents = mutableDocuments
+                    documents = mutableDocuments.toImmutableList()
                 )
             } else {
                 postEffect(UIEffect.NavigateDocument(mutableDocuments[index].id))
@@ -93,7 +94,7 @@ class DocumentsViewModel(
             val mutableDocuments = documents.toMutableList()
             mutableDocuments[index] = mutableDocuments[index].copy(isSelected = true)
             return@updateState copy(
-                documents = mutableDocuments,
+                documents = mutableDocuments.toImmutableList(),
                 isActionMode = true
             )
         }

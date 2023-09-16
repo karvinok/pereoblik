@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,8 +28,11 @@ import com.vilinesoft.documents.DocumentsContract.*
 import com.vilinesoft.domain.model.Document
 import com.vilinesoft.domain.model.mockedDocuments
 import com.vilinesoft.ui.components.Button
+import com.vilinesoft.ui.components.TopBarTitle
+import com.vilinesoft.ui.theme.DefaultShape
 import com.vilinesoft.ui.theme.Icon
 import com.vilinesoft.ui.theme.PereoblikTheme
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -72,10 +74,7 @@ fun DocumentsContent(
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
     ) {
-        Text(
-            text = "Документи",
-            modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
-        )
+        TopBarTitle(title = "Документи")
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(vertical = 16.dp)
@@ -136,7 +135,7 @@ fun DocumentsContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DocumentsList(
-    documents: List<Document>,
+    documents: ImmutableList<Document>,
     modifier: Modifier = Modifier,
     onItemClicked: (Int) -> Unit,
     onItemLongClicked: (Int) -> Unit
@@ -168,6 +167,7 @@ fun PreviewDocumentsScreen() {
     PereoblikTheme {
         DocumentsContent(
             state = UIState(
+                isActionMode = false,
                 documents = mockedDocuments(),
                 //dialogState = CreateDocumentDialogState(),
                 isDeleteAlertDialogVisible = false

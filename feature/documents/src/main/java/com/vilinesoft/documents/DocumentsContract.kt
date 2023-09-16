@@ -2,12 +2,14 @@ package com.vilinesoft.documents
 
 import com.vilinesoft.domain.model.Document
 import com.vilinesoft.domain.model.DocumentType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 class DocumentsContract {
 
     data class UIState(
         val isActionMode: Boolean = false,
-        val documents: List<Document> = listOf(),
+        val documents: ImmutableList<Document> = persistentListOf(),
         val dialogCreateDocState: CreateDocumentDialogState? = null,
         val isDeleteAlertDialogVisible: Boolean = false,
     )
@@ -33,7 +35,7 @@ class DocumentsContract {
 
     data class CreateDocumentDialogState(
         val comment: String = "",
-        val documentTypes: List<DocumentType> = listOf(),
+        val documentTypes: ImmutableList<DocumentType> = persistentListOf(),
         val selectedDocType: DocumentType = DocumentType.PEREOB
     )
 }

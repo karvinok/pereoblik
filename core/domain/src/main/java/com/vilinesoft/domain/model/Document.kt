@@ -1,9 +1,10 @@
 package com.vilinesoft.domain.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Stable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
-@Parcelize
+@Stable
 data class Document(
     val id: String = "",
     val numberDoc: String? = "",
@@ -13,6 +14,6 @@ data class Document(
     val is1C: Int? = null,
     val isChanged: Int? = null,
     val storeCode: String? = null,
-    val items: List<DocumentItem>? = null,
-    var isSelected: Boolean = false
-): Parcelable
+    val items: ImmutableList<DocumentItem> = persistentListOf(),
+    val isSelected: Boolean = false
+)

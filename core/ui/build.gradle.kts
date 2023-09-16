@@ -29,6 +29,7 @@ dependencies {
 
     implementation(DependenciesPlugin.androidCore)
 
+    api(DependenciesPlugin.immutableCollections)
     api(platform(DependenciesPlugin.composeBom))
     api(DependenciesPlugin.composeUi)
     api(DependenciesPlugin.composeUiGraphics)

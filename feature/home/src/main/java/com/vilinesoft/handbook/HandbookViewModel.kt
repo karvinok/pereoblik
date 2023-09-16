@@ -42,10 +42,9 @@ class HandbookViewModel(
                 viewModelScope.launch(Dispatchers.IO) {
                     updateState { copy(loading = true) }
 
-                    repository.requestGood(barcode, 10, "101").either {
-                        updateState {
-                            copy(barcode = "", loading = false, good = it)
-                        }
+                    val good = repository.requestGood(barcode, 10, "101").good
+                    updateState {
+                        copy(barcode = "", loading = false, good = good)
                     }
                 }
             }

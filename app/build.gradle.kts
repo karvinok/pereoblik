@@ -30,12 +30,13 @@ android {
             isShrinkResources = false
         }
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -70,13 +71,6 @@ dependencies {
     implementation(DependenciesPlugin.koinAndroid)
     implementation(DependenciesPlugin.androidLifecycle)
     implementation(DependenciesPlugin.navigationCompose)
-
     implementation(DependenciesPlugin.serialization)
-
-    implementation(platform(DependenciesPlugin.composeBom))
     implementation(DependenciesPlugin.activityCompose)
-    implementation(DependenciesPlugin.composeUi)
-    implementation(DependenciesPlugin.composeUiGraphics)
-    implementation(DependenciesPlugin.composeUiMaterial3)
-    implementation(DependenciesPlugin.composeUiToolingPreview)
 }

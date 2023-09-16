@@ -19,5 +19,9 @@ android {
 }
 
 dependencies {
+    implementation(DependenciesPlugin.immutableCollections)
 
+    //TODO replace compose runtime by mapping
+    // unstable elements from domain to UI feature module.
+    implementation(DependenciesPlugin.composeRuntime)
 }

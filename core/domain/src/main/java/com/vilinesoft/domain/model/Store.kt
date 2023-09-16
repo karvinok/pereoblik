@@ -1,10 +1,9 @@
 package com.vilinesoft.domain.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Stable
 
-@Parcelize
-class Store(
+@Stable
+data class Store(
     val code: String,
     val name: String
-): Parcelable
+)

@@ -1,10 +1,9 @@
 package com.vilinesoft.domain.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Stable
 
-@Parcelize
-class Good(
+@Stable
+data class Good(
     val id: Int = 0,
     val goodName: String? = null,
     val goodPrice: Double? = null,
@@ -15,4 +14,4 @@ class Good(
     val isWeight: Int = 0,
     val tableRowCount: Int = 0,
     val currentRow: Int = 0
-): Parcelable
+)

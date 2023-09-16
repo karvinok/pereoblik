@@ -1,7 +1,10 @@
 package com.vilinesoft.domain.model
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
 fun mockedDocuments(
-): MutableList<Document> {
+): ImmutableList<Document> {
     val mockDocumentItem1 = DocumentItem(
         id = "item1",
         name = "Item 1",
@@ -23,7 +26,7 @@ fun mockedDocuments(
         isNew = false
     )
 
-    return mutableListOf(
+    return persistentListOf(
         Document(
             id = "doc1",
             numberDoc = "No12312345",
@@ -33,7 +36,7 @@ fun mockedDocuments(
             is1C = 1,
             isChanged = 0,
             storeCode = "STORE1",
-            items = listOf(mockDocumentItem1, mockDocumentItem2)
+            items = persistentListOf(mockDocumentItem1, mockDocumentItem2)
         ),
         Document(
             id = "doc2",
@@ -44,7 +47,18 @@ fun mockedDocuments(
             is1C = 1,
             isChanged = 0,
             storeCode = "STORE1",
-            items = listOf(mockDocumentItem1, mockDocumentItem2)
+            items = persistentListOf(mockDocumentItem1, mockDocumentItem2, mockDocumentItem2)
+        ),
+        Document(
+            id = "doc2",
+            numberDoc = "No22312345",
+            dateDoc = "Date",
+            commDoc = "comment2",
+            docType = DocumentType.POVERN,
+            is1C = 1,
+            isChanged = 0,
+            storeCode = "STORE1",
+            items = persistentListOf(mockDocumentItem1, mockDocumentItem2, mockDocumentItem2)
         )
     )
 }

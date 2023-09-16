@@ -21,17 +21,16 @@ android {
 
 dependencies {
     implementation(project(":core:domain"))
-    
+
     implementation(DependenciesPlugin.koinCore)
     implementation(DependenciesPlugin.koinAndroid)
-
     implementation(DependenciesPlugin.roomRuntime)
+    implementation(DependenciesPlugin.roomKtx)
     implementation(DependenciesPlugin.roomKsp) {
         exclude(group = "com.intellij", module = "annotations")
     }
-
     ksp(DependenciesPlugin.roomKsp)
-
+    implementation(DependenciesPlugin.immutableCollections)
     implementation(DependenciesPlugin.serialization)
     implementation(DependenciesPlugin.retrofit)
     implementation(DependenciesPlugin.retrofitSerialization)

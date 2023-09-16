@@ -9,44 +9,58 @@ import com.vilinesoft.data.model.DocumentItemEntity
 @Keep
 interface DocumentDao {
 
-    fun getSelectedDocuments(idsString: String): List<DocumentEntity> {
-        return querySelectedDocuments(idsString)
+    suspend fun getSelectedDocuments(idsString: String): List<DocumentEntity> {
+        return getDocumentsByIds(idsString)
     }
 
-    fun getSelectedDocumentItems(docId: String): List<DocumentItemEntity> {
-        return queryDocumentItems(docId)
+    suspend fun getSelectedDocumentItems(docId: String): List<DocumentItemEntity> {
+        return getDocumentItemsByDocId(docId)
     }
 
-    fun deleteDocuments(ids: Array<String>) {
-        queryDeleteDocumentsByIds(ids)
-        queryDeleteDocumentsItemsByIds(ids)
+    @Transaction
+    suspend fun deleteDocuments(ids: Array<String>) {
+        deleteDocumentsByIds(ids)
+        deleteDocumentsItemsByIds(ids)
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addDocument(addUser: DocumentEntity)
+    suspend fun insertDocument(addUser: DocumentEntity)
+
+    @Transaction
+    suspend fun getDocumentWithItems(docId: String): DocumentEntity {
+        val documentItems = getDocumentItemsByDocId(docId)
+        return getDocumentById(docId).apply {
+            items = documentItems.sortedBy { it.id }
+        }
+    }
 
     @Query("SELECT * FROM DocumentTable WHERE id=:id")
-    fun getDocument(id: String): DocumentEntity
+    suspend fun getDocumentById(id: String): DocumentEntity
 
     @Query("SELECT * FROM DocumentTable")
-    fun getAllDocuments(): List<DocumentEntity>
+    suspend fun getAllDocuments(): List<DocumentEntity>
 
     @Query("SELECT COUNT(id) FROM DocumentTable")
-    fun getDocumentsCount(): Int
+    suspend fun getDocumentsCount(): Int
 
     @Query("DELETE FROM DocumentTable WHERE id IN (:ids)")
-    fun queryDeleteDocumentsByIds(ids: Array<String>)
+    suspend fun deleteDocumentsByIds(ids: Array<String>)
 
     @Query("DELETE FROM DocumentItemTable WHERE idDoc IN (:ids)")
-    fun queryDeleteDocumentsItemsByIds(ids: Array<String>)
+    suspend fun deleteDocumentsItemsByIds(ids: Array<String>)
 
     @Query("SELECT * FROM DocumentTable WHERE id IN (:idsString)")
-    fun querySelectedDocuments(idsString: String): List<DocumentEntity>
+    suspend fun getDocumentsByIds(idsString: String): List<DocumentEntity>
 
-    @Query("SELECT * FROM DocumentItemTable WHERE idDoc =:id")
-    fun queryDocumentItems(id: String): List<DocumentItemEntity>
+    @Query("SELECT * FROM DocumentItemTable WHERE idDoc =:docId")
+    suspend fun getDocumentItemsByDocId(docId: String): List<DocumentItemEntity>
 
-    @Query("SELECT * FROM DocumentItemTable WHERE idDoc =:id")
-    fun queryDocumentItem(id: String): DocumentItemEntity
+    @Query("SELECT * FROM DocumentItemTable WHERE idDoc =:docId")
+    suspend fun getDocumentItemByDocId(docId: String): DocumentItemEntity
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDocumentItem(item: DocumentItemEntity)
+
+    @Query("SELECT * FROM DocumentItemTable WHERE barcode = :barcode AND idDoc = :idDoc LIMIT 1")
+    suspend fun getDocumentItemByBarcode(barcode: String, idDoc: String): DocumentItemEntity
 }

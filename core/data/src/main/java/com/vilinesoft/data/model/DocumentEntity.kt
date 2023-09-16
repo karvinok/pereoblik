@@ -7,6 +7,8 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.vilinesoft.domain.model.Document
 import com.vilinesoft.domain.model.DocumentType
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Keep
 @Entity(tableName = "DocumentTable")
@@ -45,9 +47,24 @@ class DocumentEntity(
 }
 
 fun DocumentEntity.fromEntity() = Document(
-    id, numberDoc, dateDoc, commDoc, DocumentType.valueOf(docType), is1C, isChanged, storeCode
+    id = id,
+    numberDoc = numberDoc,
+    dateDoc = dateDoc,
+    commDoc = commDoc,
+    docType = DocumentType.valueOf(docType),
+    is1C = is1C,
+    isChanged = isChanged,
+    storeCode = storeCode,
+    items = items?.map { it.fromEntity() }?.toImmutableList()?: persistentListOf()
 )
 
 fun Document.toEntity() = DocumentEntity(
-    id, numberDoc, dateDoc, commDoc, docType?.typeNumber, is1C, isChanged, storeCode
+    id = id,
+    numberDoc = numberDoc,
+    dateDoc = dateDoc,
+    commDoc = commDoc,
+    docType = docType?.typeNumber,
+    is1C = is1C,
+    isChanged = isChanged,
+    storeCode = storeCode,
 )
