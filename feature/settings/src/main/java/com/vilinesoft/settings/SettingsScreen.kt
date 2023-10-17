@@ -103,7 +103,6 @@ fun SettingsContent(
                 text = "номер версії"
             )
         }
-        //SwitchField(titleString = , onClick = , checked = )
 
         if (state.loadingStoreList) {
             LoadingShops(modifier)
