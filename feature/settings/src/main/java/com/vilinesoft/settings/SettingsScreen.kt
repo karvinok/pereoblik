@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vilinesoft.settings.SettingsContract.UIIntent
 import com.vilinesoft.settings.SettingsContract.UIState
 import com.vilinesoft.ui.components.Button
+import com.vilinesoft.ui.components.SelectionField
 import com.vilinesoft.ui.components.SwitchField
 import com.vilinesoft.ui.components.TextField
 import com.vilinesoft.ui.theme.FontSize
@@ -75,6 +76,10 @@ fun SettingsContent(
             onClick = { intentBlock(UIIntent.CanChangeItemNameClick(it)) },
             checked = state.isCanChangeItemName
         )
+        SelectionField(titleString = "",
+            selectedElementTitle = "",
+            list = state.downloadedStoreList,
+            selectedBlock = {})
         Button(
             modifier = modifier
                 .fillMaxWidth()

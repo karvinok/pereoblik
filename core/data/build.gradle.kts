@@ -10,6 +10,9 @@ plugins {
 android {
     namespace = "com.vilinesoft.data"
     compileSdk = DependenciesPlugin.compileSdkVersion
+    defaultConfig {
+        minSdk = DependenciesPlugin.minSdkVersion
+    }
 
     compileOptions {
         sourceCompatibility = DependenciesPlugin.javaVersion

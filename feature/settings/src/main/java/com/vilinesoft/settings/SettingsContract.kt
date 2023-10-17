@@ -8,9 +8,12 @@ class SettingsContract {
         val ipString: String = "",
         val ipPrefix: String = "",
         val isCanItemCreatingIfNotExists: Boolean = false,
-        val isCanItemCreatingWithoutBarcode: Boolean= false,
-        val isCanChangeItemName: Boolean= false,
-        val downloadedStoreList: List<Store> = listOf(Store("0", "testStore0"), Store("1", "testStore1") ),
+        val isCanItemCreatingWithoutBarcode: Boolean = false,
+        val isCanChangeItemName: Boolean = false,
+        val downloadedStoreList: List<Store> = listOf(
+            Store("0", "testStore0"),
+            Store("1", "testStore1")
+        ),
         val loadingStoreList: Boolean = false,
         val internetConnection: Boolean = true,
     )
@@ -21,7 +24,7 @@ class SettingsContract {
         data class CanCreateItemCreatingIfNotExists(val value: Boolean) : UIIntent()
         data class CanCreateItemWithoutBarcodeClick(val value: Boolean) : UIIntent()
         data class CanChangeItemNameClick(val value: Boolean) : UIIntent()
-        data object ListOfStore : UIIntent()
+        data class StoreSelected(val value: String) : UIIntent()
         data object SaveClick : UIIntent()
     }
 
