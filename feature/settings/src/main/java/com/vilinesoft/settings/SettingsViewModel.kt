@@ -24,15 +24,25 @@ class SettingsViewModel(private val manager: CacheManager) :
         when (intent) {
             is UIIntent.IpStringChanged -> updateState { copy(ipString = intent.value) }
             is UIIntent.PrefixChanged -> updateState { copy(ipPrefix = intent.value) }
-            is UIIntent.CanCreateItemCreatingIfNotExists -> updateState { copy(isCanItemCreatingIfNotExists = !intent.value) }
-            is UIIntent.CanCreateItemWithoutBarcodeClick -> updateState { copy(isCanItemCreatingWithoutBarcode = !intent.value) }
+            is UIIntent.CanCreateItemCreatingIfNotExists -> updateState {
+                copy(
+                    isCanItemCreatingIfNotExists = !intent.value
+                )
+            }
+
+            is UIIntent.CanCreateItemWithoutBarcodeClick -> updateState {
+                copy(
+                    isCanItemCreatingWithoutBarcode = !intent.value
+                )
+            }
+
             is UIIntent.CanChangeItemNameClick -> updateState { copy(isCanChangeItemName = !intent.value) }
-            is UIIntent.StoreSelected-> {}
+            is UIIntent.SelectStore -> updateState { copy(storeSelected = intent.value) }
             is UIIntent.SaveClick -> saveSettings()
         }
     }
 
-    private fun saveSettings(){
+    private fun saveSettings() {
         manager.ip = uiState.value.ipString
         manager.prefix = uiState.value.ipPrefix
         manager.createItemIfNotExists = uiState.value.isCanItemCreatingIfNotExists

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vilinesoft.settings.SettingsContract.UIIntent
+import com.vilinesoft.settings.SettingsContract.UIIntent.SelectStore
 import com.vilinesoft.settings.SettingsContract.UIState
 import com.vilinesoft.ui.components.Button
 import com.vilinesoft.ui.components.SelectionField
@@ -76,14 +77,16 @@ fun SettingsContent(
             onClick = { intentBlock(UIIntent.CanChangeItemNameClick(it)) },
             checked = state.isCanChangeItemName
         )
-        SelectionField(titleString = "",
-            selectedElementTitle = "",
+        SelectionField(titleString = "Магазин/Склад",
+            selectedElementTitle = state.storeSelected.name,
             list = state.downloadedStoreList,
-            selectedBlock = {})
+            selectedBlock = {
+                it?.let { it1 -> SelectStore(it1) }?.let { it2 -> intentBlock(it2) }
+            })
         Button(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+                .padding(top = 16.dp),
             onClick = { intentBlock(UIIntent.SaveClick) },
             text = "ЗБЕРЕГТИ"
         )
