@@ -8,6 +8,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,24 +16,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vilinesoft.documents.DocumentsContract.*
 import com.vilinesoft.domain.model.Document
-import com.vilinesoft.domain.model.mockedDocuments
 import com.vilinesoft.ui.components.Button
 import com.vilinesoft.ui.components.TopBarTitle
-import com.vilinesoft.ui.theme.DefaultShape
+import com.vilinesoft.ui.components.clickableBounded
 import com.vilinesoft.ui.theme.Icon
 import com.vilinesoft.ui.theme.PereoblikTheme
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -47,10 +52,11 @@ fun DocumentsScreen(
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.uiEffect.collectLatest {
-            when(it) {
+            when (it) {
                 is UIEffect.ShowToast -> {
                     Toast.makeText(context, it.text, Toast.LENGTH_SHORT).show()
                 }
+
                 is UIEffect.NavigateDocument -> onNavigateDocument(it.documentId)
             }
         }
@@ -104,12 +110,29 @@ fun DocumentsContent(
                 onClick = { intentBlock(UIIntent.AskDeleteClick) }
             )
         }
-        DocumentsList(
-            documents = state.documents,
-            modifier = Modifier.fillMaxHeight(),
-            onItemClicked = { intentBlock(UIIntent.ItemClick(it)) },
-            onItemLongClicked = { intentBlock(UIIntent.ItemLongClick(it)) }
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            if (state.documents.isNotEmpty()) {
+                DocumentsList(
+                    documents = state.documents,
+                    modifier = Modifier.fillMaxHeight(),
+                    onItemClicked = { intentBlock(UIIntent.ItemClick(it)) },
+                    onItemLongClicked = { intentBlock(UIIntent.ItemLongClick(it)) }
+                )
+            } else {
+                Text(
+                    text = "Документів немає, \n спробуйте створити новий",
+                    modifier = Modifier
+                        .clickableBounded(shape = RoundedCornerShape(12.dp)) {
+                            intentBlock(UIIntent.AddClick)
+                        }
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
     state.dialogCreateDocState?.let {
         DialogNewDocument(
@@ -168,7 +191,7 @@ fun PreviewDocumentsScreen() {
         DocumentsContent(
             state = UIState(
                 isActionMode = false,
-                documents = mockedDocuments(),
+                documents = persistentListOf<Document>(),//mockedDocuments(),
                 //dialogState = CreateDocumentDialogState(),
                 isDeleteAlertDialogVisible = false
             ),

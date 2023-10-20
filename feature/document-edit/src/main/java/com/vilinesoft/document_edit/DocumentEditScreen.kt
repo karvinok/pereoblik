@@ -84,12 +84,23 @@ fun DocumentEditContent(
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier.weight(1f)
         ) {
-            state.document?.items?.let { items ->
-                ItemsList(
-                    documents = items,
-                    onItemClicked = { onIntent(UIIntent.ItemClick(it)) },
-                    onItemLongClicked = { onIntent(UIIntent.ItemLongClick(it)) }
-                )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                if (state.document?.items.isNullOrEmpty()) {
+                    Text(
+                        text = "Товарів немає, \n спробуйте засканувати один",
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    ItemsList(
+                        documents = state.document?.items!!,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        onItemClicked = { onIntent(UIIntent.ItemClick(it)) },
+                        onItemLongClicked = { onIntent(UIIntent.ItemLongClick(it)) }
+                    )
+                }
             }
             androidx.compose.animation.AnimatedVisibility(
                 visible = state.barcode.isNotBlank(),
