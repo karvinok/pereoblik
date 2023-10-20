@@ -5,7 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,7 +63,10 @@ fun TextField(
     val isFocused = interactionSource.collectIsFocusedAsState().value
     val isError = !errorText.isNullOrBlank() && isEnabled
     val focusManager = LocalFocusManager.current
-    val tfValue = TextFieldValue(text = value?: titleString?: "", selection = TextRange(value?.length?: 0))
+    val tfValue = TextFieldValue(
+        text = value ?: titleString ?: "",
+        selection = TextRange(value?.length ?: 0)
+    )
 
     val focusRequester = FocusRequester()
 
@@ -116,9 +126,11 @@ fun TextField(
                 BasicTextField(
                     value = tfValue,
                     onValueChange = onValueChange,
+                    enabled = isEnabled,
                     modifier = modifier
                         .arrowFocusEvents(focusManager, onActionDone)
                         .padding(12.dp)
+                        .fillMaxWidth()
                         .focusRequester(focusRequester),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = keyboardType,
@@ -159,7 +171,6 @@ fun TextField(
         }
     }
 }
-
 
 
 @Composable

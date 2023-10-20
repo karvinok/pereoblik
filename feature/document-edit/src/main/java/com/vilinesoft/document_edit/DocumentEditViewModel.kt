@@ -2,7 +2,11 @@ package com.vilinesoft.document_edit
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.vilinesoft.document_edit.DocumentEditContract.*
+import com.vilinesoft.document_edit.DocumentEditContract.UIEffect
+import com.vilinesoft.document_edit.DocumentEditContract.UIIntent
+import com.vilinesoft.document_edit.DocumentEditContract.UIState
+import com.vilinesoft.document_edit.DocumentEditContract.UpdateItemDialogIntent
+import com.vilinesoft.document_edit.DocumentEditContract.UpdateItemDialogState
 import com.vilinesoft.domain.model.DocumentItem
 import com.vilinesoft.domain.repository.MainRepository
 import com.vilinesoft.ui.BaseViewModel
@@ -34,10 +38,43 @@ class DocumentEditViewModel(
 
     override fun handleIntent(intent: UIIntent) {
         when (intent) {
-            is UIIntent.DismissCreationDialog -> updateState {
+            is UIIntent.DialogCreationDismiss -> updateState {
                 copy(dialogItemCreationVisible = false, barcode = "")
             }
+
             is UIIntent.CreateItemConfirmClick -> handleCreateItemConfirmClick(intent)
+            is UIIntent.ItemLongClick -> updateState {
+                val item = document?.items?.getOrNull(intent.itemIndex)
+                    ?: return@updateState copy()
+
+                val state = UpdateItemDialogState(
+                    itemName = item.name ?: "",
+                    isNameEditable = false,
+                    qtyFact = item.qtyFact,
+                    qtyBalance = item.qtyBalance,
+                    count = item.qtyFact,
+                    price = item.price,
+                    unitType = item.unit,
+                )
+                copy(dialogUpdateItemState = state, barcode = "")
+            }
+
+            is UpdateItemDialogIntent.NameChanged -> updateState {
+                if (true) {
+                    copy(
+                        dialogUpdateItemState = dialogUpdateItemState?.copy(itemName = intent.name)
+                    )
+                } else copy()
+            }
+
+            is UpdateItemDialogIntent.DialogConfirmClick -> updateState {
+                copy(dialogUpdateItemState = null)
+            }
+
+            is UpdateItemDialogIntent.DialogDismiss -> updateState {
+                copy(dialogUpdateItemState = null)
+            }
+
             else -> Unit
         }
     }
@@ -45,7 +82,8 @@ class DocumentEditViewModel(
     private fun handleCreateItemConfirmClick(intent: UIIntent.CreateItemConfirmClick) {
         if (intent.name.isNullOrBlank()
             || intent.price.isNullOrBlank()
-            || intent.qty.isNullOrBlank()) return
+            || intent.qty.isNullOrBlank()
+        ) return
 
         updateState {
             val item = DocumentItem(
@@ -106,13 +144,20 @@ class DocumentEditViewModel(
                         barcode = "",
                     )
                 }
+
                 1 -> {
                     //TODO check if user can create items and show dialog
                     val itemByBarcode = repository.fetchItemByBarcode(barcode, documentId)
 
                     if (itemByBarcode != null) {
                         //update item dialog
-                        repository.saveItem(itemByBarcode.copy(qtyFact = itemByBarcode.qtyFact?.plus(1.0)))
+                        repository.saveItem(
+                            itemByBarcode.copy(
+                                qtyFact = itemByBarcode.qtyFact?.plus(
+                                    1.0
+                                )
+                            )
+                        )
                         copy(
                             document = repository.fetchDocumentById(documentId),
                             barcode = ""
@@ -123,6 +168,7 @@ class DocumentEditViewModel(
                         )
                     }
                 }
+
                 else -> copy(barcode = "", error = true)
             }
         }
