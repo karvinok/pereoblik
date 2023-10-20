@@ -37,13 +37,13 @@ abstract class BaseViewModel<I, S, E> : ViewModel() {
         }
     }
 
-    private fun subscribeIntents() {
-        viewModelScope.launch(Dispatchers.Main) {
-            _uiIntent.collect {
-                handleIntent(it)
-            }
-        }
-    }
+//    private fun subscribeIntents() {
+//        viewModelScope.launch(Dispatchers.Main) {
+//            _uiIntent.collect {
+//                handleIntent(it)
+//            }
+//        }
+//    }
 
     /**
      * handle UIIntent

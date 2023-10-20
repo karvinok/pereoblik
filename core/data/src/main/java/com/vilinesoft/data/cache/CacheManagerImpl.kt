@@ -7,7 +7,7 @@ import com.vilinesoft.domain.repository.CacheManager
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class CacheManagerImpl(val context: Context):CacheManager {
+class CacheManagerImpl(context: Context) : CacheManager {
 
     private val preferences = context.getSharedPreferences(
         PREF_ST_KEY, Context.MODE_PRIVATE
@@ -54,18 +54,20 @@ class CacheManagerImpl(val context: Context):CacheManager {
         }
 
     private fun get(key: String, defaultValue: String = ""): String {
-        return preferences.getString(key, defaultValue)?: defaultValue
+        return preferences.getString(key, defaultValue) ?: defaultValue
     }
 
     private fun get(key: String, defaultValue: Boolean = false): Boolean {
         return preferences.getBoolean(key, defaultValue)
     }
 
+
     private fun save(key: String, value: String?) {
         val editor: SharedPreferences.Editor = preferences.edit()
-        editor.putString(key, value?: "")
+        editor.putString(key, value ?: "")
         editor.apply()
     }
+
 
     private fun save(key: String, value: Boolean) {
         val editor: SharedPreferences.Editor = preferences.edit()
