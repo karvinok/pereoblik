@@ -9,4 +9,5 @@ object FontSize {
     val medium: TextUnit = 14.sp
     val large: TextUnit = 16.sp
     val extraLarge: TextUnit = 18.sp
+    val giant: TextUnit = 24.sp
 }

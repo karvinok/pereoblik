@@ -63,7 +63,7 @@ internal fun ItemUpdateDialog(
                 Text(
                     modifier = Modifier,
                     fontSize = FontSize.extraLarge,
-                    text = state.count.toDoubleString()
+                    text = state.qtyFact.toDoubleString()
                 )
                 Text(
                     modifier = Modifier,
@@ -72,7 +72,7 @@ internal fun ItemUpdateDialog(
                 Text(
                     modifier = Modifier,
                     fontSize = FontSize.medium,
-                    text = state.count.toDoubleString()
+                    text = state.qtyBalance.toDoubleString()
                 )
             }
             Row(
@@ -109,7 +109,7 @@ internal fun ItemUpdateDialog(
                             vertical = 6.dp
                         ),
                     textAlign = TextAlign.Center,
-                    fontSize = FontSize.extraLarge,
+                    fontSize = FontSize.giant,
                     text = state.count.toDoubleString()
                 )
                 Text(
@@ -143,7 +143,7 @@ fun ItemUpdateDialogPreview() {
                 false,
                 9.0,
                 12.0,
-                3.0,
+                323.0,
                 44.50,
                 "шт",
             ),
