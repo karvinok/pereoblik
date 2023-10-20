@@ -1,10 +1,21 @@
 package com.vilinesoft.navigation.destinations
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.runtime.Composable
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
+import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import androidx.navigation.get
 import androidx.navigation.navArgument
 import androidx.navigation.navOptions
 import androidx.navigation.navigation
@@ -29,7 +40,7 @@ fun NavGraphBuilder.homeGraph(
         route = ROUTE_HOME_GRAPH,
         startDestination = ROUTE_HOME,
     ) {
-        composable(route = ROUTE_HOME) {
+        animComposable(route = ROUTE_HOME) {
             HomeScreen(
                 onHandbookClick = navController::navigateToHandbook,
                 onDocumentsClick = navController::navigateToDocuments,
@@ -39,13 +50,13 @@ fun NavGraphBuilder.homeGraph(
         dialog(route = ROUTE_HANDBOOK) {
             HandbookScreen(onCloseRequest = navController::popBackStack)
         }
-        composable(route = ROUTE_DOCUMENTS) {
+        animComposable(route = ROUTE_DOCUMENTS) {
             DocumentsScreen(onNavigateDocument = navController::navigateToDocumentEdit)
         }
-        composable(route = ROUTE_SETTINGS) {
+        animComposable(route = ROUTE_SETTINGS) {
             SettingsScreen()
         }
-        composable(
+        animComposable(
             route = "$ROUTE_DOCUMENT_EDIT/{document_id}",
             arguments = listOf(navArgument("document_id") {
                 nullable = true
@@ -57,6 +68,45 @@ fun NavGraphBuilder.homeGraph(
         nestedGraphs()
     }
 }
+
+public fun NavGraphBuilder.animComposable(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) {
+    composable(
+        route = route,
+        arguments = arguments,
+        deepLinks = deepLinks,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(300)
+            ) + fadeIn()
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(300)
+            ) + fadeOut()
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(300)
+            ) + fadeIn()
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(300)
+            ) + fadeOut()
+        },
+        content = content
+    )
+}
+
 
 val DefaultNavOptions = navOptions {
     launchSingleTop = true

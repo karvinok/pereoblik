@@ -31,13 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vilinesoft.documents.DocumentsContract.*
 import com.vilinesoft.domain.model.Document
+import com.vilinesoft.domain.model.mockedDocuments
 import com.vilinesoft.ui.components.Button
 import com.vilinesoft.ui.components.TopBarTitle
 import com.vilinesoft.ui.components.clickableBounded
 import com.vilinesoft.ui.theme.Icon
 import com.vilinesoft.ui.theme.PereoblikTheme
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -191,9 +191,9 @@ fun PreviewDocumentsScreen() {
         DocumentsContent(
             state = UIState(
                 isActionMode = false,
-                documents = persistentListOf<Document>(),//mockedDocuments(),
-                //dialogState = CreateDocumentDialogState(),
-                isDeleteAlertDialogVisible = false
+                documents = mockedDocuments(),
+                //dialogCreateDocState = CreateDocumentDialogState(),
+                //isDeleteAlertDialogVisible = true
             ),
             intentBlock = {}
         )

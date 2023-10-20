@@ -13,12 +13,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vilinesoft.domain.util.takeIfDouble
 import com.vilinesoft.ui.components.Button
 import com.vilinesoft.ui.components.TextField
 import com.vilinesoft.ui.theme.LargeShape
+import com.vilinesoft.ui.theme.PereoblikTheme
 
 
 @Composable
@@ -29,6 +31,8 @@ internal fun ItemCreationDialog(
     val nameState = rememberSaveable { mutableStateOf("") }
     val priceState = rememberSaveable { mutableStateOf("") }
     val qtyState = rememberSaveable { mutableStateOf("1") }
+    val isNameError = rememberSaveable { mutableStateOf(false) }
+    val isPriceError = rememberSaveable { mutableStateOf(false) }
 
     Dialog(onDismissRequest = { onDismissRequest(DocumentEditContract.UIIntent.DialogCreationDismiss) }) {
         Column(
@@ -45,11 +49,13 @@ internal fun ItemCreationDialog(
             TextField(
                 titleString = "Назва товару",
                 value = nameState.value,
+                errorText = if (isNameError.value) "Потрібно заповнити поле" else null,
                 onValueChange = { nameState.value = it.text }
             )
             TextField(
                 titleString = "Ціна",
                 value = priceState.value,
+                errorText = if (isPriceError.value) "Потрібно заповнити поле" else null,
                 keyboardType = KeyboardType.Decimal,
                 onValueChange = {
                     priceState.value = it.text.takeIfDouble() ?: priceState.value
@@ -69,6 +75,8 @@ internal fun ItemCreationDialog(
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
             ) {
+                isNameError.value = nameState.value.isBlank()
+                isPriceError.value = priceState.value.isBlank()
                 onConfirmClick(
                     DocumentEditContract.UIIntent.CreateItemConfirmClick(
                         name = nameState.value,
@@ -78,5 +86,16 @@ internal fun ItemCreationDialog(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun ItemCreationDialogPreview() {
+    PereoblikTheme {
+        ItemCreationDialog(
+            onConfirmClick = {},
+            onDismissRequest = {}
+        )
     }
 }
