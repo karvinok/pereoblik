@@ -66,6 +66,14 @@ fun Modifier.clickableUnbounded(onClick: () -> Unit) = composed {
     )
 }
 
+fun Modifier.clickableNoIndication(onClick: (() -> Unit)? = null) = composed {
+    clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = null,
+        onClick = onClick?: {}
+    )
+}
+
 fun Modifier.defaultShadow(
     shape: Shape = RectangleShape,
     clip: Boolean = false,

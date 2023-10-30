@@ -13,13 +13,17 @@ class DocumentEditContract {
     )
 
     data class UpdateItemDialogState(
+        val id: String,
         val itemName: String,
         val isNameEditable: Boolean,
         val qtyFact: Double?,
         val qtyBalance: Double?,
         val count: Double?,
         val price: Double?,
-        val unitType: String?
+        val barcode: String,
+        val unitType: String?,
+        val isMode3: Boolean,
+        val isCountEditedLocally: Boolean = false
     )
 
     sealed interface UIIntent {

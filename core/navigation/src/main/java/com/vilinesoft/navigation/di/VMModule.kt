@@ -13,7 +13,7 @@ object VMModule {
         viewModel { HomeViewModel() }
         viewModel { HandbookViewModel(get(), get()) }
         viewModel { DocumentsViewModel(get()) }
-        viewModel { DocumentEditViewModel(get(), get(), get()) }
+        viewModel { DocumentEditViewModel(get(), get(), get(), get()) }
         viewModel { SettingsViewModel(get())}
     }
 }

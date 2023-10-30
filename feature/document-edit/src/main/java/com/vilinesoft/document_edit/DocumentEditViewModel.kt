@@ -8,6 +8,7 @@ import com.vilinesoft.document_edit.DocumentEditContract.UIState
 import com.vilinesoft.document_edit.DocumentEditContract.UpdateItemDialogIntent
 import com.vilinesoft.document_edit.DocumentEditContract.UpdateItemDialogState
 import com.vilinesoft.domain.model.DocumentItem
+import com.vilinesoft.domain.repository.CacheManager
 import com.vilinesoft.domain.repository.MainRepository
 import com.vilinesoft.ui.BaseViewModel
 import com.vilinesoft.ui.keyprocessing.ArrowEvent
@@ -21,12 +22,14 @@ import java.util.UUID
 class DocumentEditViewModel(
     savedStateHandle: SavedStateHandle,
     override val keyEventBus: KeyEventBus,
-    private val repository: MainRepository
+    private val repository: MainRepository,
+    private val cacheManager: CacheManager
 ) : BaseViewModel<UIIntent, UIState, UIEffect>(), KeyEventHandler {
 
     override var keyEventsJob: Job? = Job()
     override var scope: CoroutineScope = viewModelScope
     override fun provideDefaultState() = UIState()
+    private val DEFAULT_ITEM_EDIT_COUNT: Double = 1.0
 
     private val documentId: String = checkNotNull(savedStateHandle["document_id"])
 
@@ -47,14 +50,12 @@ class DocumentEditViewModel(
                 val item = document?.items?.getOrNull(intent.itemIndex)
                     ?: return@updateState copy()
 
-                val state = UpdateItemDialogState(
-                    itemName = item.name ?: "",
-                    isNameEditable = false,
-                    qtyFact = item.qtyFact,
-                    qtyBalance = item.qtyBalance,
+                val state = item.createStateByItem(
+                    canEditItemName = cacheManager.canEditItemName || item.name.isNullOrBlank()
+                ).copy(
+                    id = item.id,
                     count = item.qtyFact,
-                    price = item.price,
-                    unitType = item.unit,
+                    isMode3 = true
                 )
                 copy(dialogUpdateItemState = state, barcode = "")
             }
@@ -67,15 +68,42 @@ class DocumentEditViewModel(
                 } else copy()
             }
 
-            is UpdateItemDialogIntent.DialogConfirmClick -> updateState {
-                copy(dialogUpdateItemState = null)
-            }
+            is UpdateItemDialogIntent.DialogConfirmClick -> handleUpdateItemDialogConfirmClick()
 
             is UpdateItemDialogIntent.DialogDismiss -> updateState {
                 copy(dialogUpdateItemState = null)
             }
 
             else -> Unit
+        }
+    }
+
+    private fun handleUpdateItemDialogConfirmClick() {
+        updateState {
+            dialogUpdateItemState?.let {
+                val item = DocumentItem(
+                    id = it.id,
+                    idDoc = documentId,
+                    barcode = it.barcode,
+                    price = it.price,
+                    name = it.itemName,
+                    unit = "шт",
+                    isNew = false,
+                    codeGoods1C = "",
+                    qtyBalance = it.qtyBalance,
+                    qtyFact = if (!it.isMode3 && it.qtyFact != null)
+                        it.count?.plus(it.qtyFact) else it.count,
+                )
+                repository.saveItem(item)
+                val document = repository.fetchDocumentById(documentId)
+                copy(
+                    dialogUpdateItemState = null,
+                    barcode = "",
+                    document = document
+                )
+            } ?: run {
+                copy()
+            }
         }
     }
 
@@ -113,65 +141,147 @@ class DocumentEditViewModel(
 
     override fun onNumberEvent(number: Int) {
         updateState {
-            copy(
-                barcode = barcode + number.toString(),
-                error = false
-            )
+            if (dialogUpdateItemState == null) {
+                copy(
+                    barcode = barcode + number.toString(),
+                    error = false
+                )
+            } else {
+                val newCountString = if (dialogUpdateItemState.isCountEditedLocally) {
+                    (dialogUpdateItemState.count?.toInt() ?: 0).toString() + number.toString()
+                } else number.toString()
+                copy(
+                    dialogUpdateItemState = dialogUpdateItemState.copy(
+                        count = newCountString.toDouble(),
+                        isCountEditedLocally = true
+                    ),
+                )
+            }
         }
     }
 
     override fun onTechKeyEvent(event: TechKeyEvent) {
         when (event) {
-            TechKeyEvent.BACKPRESS -> postEffect(UIEffect.CloseScreen)
-            TechKeyEvent.RETURN -> updateState { copy(barcode = barcode.dropLast(1)) }
-            TechKeyEvent.ENTER -> onBarcodeEntered()
+            TechKeyEvent.BACKPRESS -> onBackPressed()
+            TechKeyEvent.RETURN -> onReturnPressed()
+            TechKeyEvent.ENTER -> onEnterPressed()
             else -> Unit
         }
     }
 
-    private fun onBarcodeEntered() {
+    private fun onBackPressed() {
+        updateState {
+            if (dialogUpdateItemState != null) {
+                copy(dialogUpdateItemState = null)
+            } else {
+                postEffect(UIEffect.CloseScreen)
+                copy()
+            }
+        }
+    }
+
+    private fun onReturnPressed() {
+        updateState {
+            if (dialogUpdateItemState == null) {
+                copy(barcode = barcode.dropLast(1))
+            } else {
+                val newCountString = dialogUpdateItemState.count?.toInt().toString()
+                val newDoubleOrNull = newCountString.dropLast(1).toDoubleOrNull()
+                if (newDoubleOrNull == null) {
+                    val value =
+                        if (dialogUpdateItemState.isMode3) dialogUpdateItemState.qtyFact else DEFAULT_ITEM_EDIT_COUNT
+                    copy(
+                        dialogUpdateItemState = dialogUpdateItemState.copy(
+                            count = value,
+                            isCountEditedLocally = false
+                        )
+                    )
+                } else {
+                    copy(
+                        dialogUpdateItemState = dialogUpdateItemState.copy(
+                            count = newDoubleOrNull
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun onEnterPressed() {
+        val isEnterPressedOnDialog = uiState.value.dialogUpdateItemState != null
+
+        if (isEnterPressedOnDialog) {
+            handleDialogEnterPress()
+        } else {
+            handleEnterPress()
+        }
+    }
+
+    private fun handleDialogEnterPress() {
+        handleIntent(UpdateItemDialogIntent.DialogConfirmClick)
+    }
+
+    private fun handleEnterPress() {
         val barcode = uiState.value.barcode.takeIf { it.isNotBlank() } ?: return
         val docType = uiState.value.document?.docType?.typeNumber ?: return
         val storeCode = uiState.value.document?.storeCode
 
         updateState {
             val goodDto = repository.requestGood(barcode, docType, storeCode)
+
+            val item = repository.fetchItemByBarcode(barcode, documentId)
+            val canEditItemName = cacheManager.canEditItemName
+
+            val state = item?.createStateByItem(
+                canEditItemName = canEditItemName || item.name.isNullOrBlank()
+            )?.copy(
+                id = item.id,
+                count = DEFAULT_ITEM_EDIT_COUNT,
+                isMode3 = false
+            )
+
             when (goodDto.status) {
                 0 -> {
-                    //TODO just show update item dialog
-
+                    //TODO just show update item dialog NOT MODE 3
                     copy(
-                        barcode = "",
+                        dialogUpdateItemState = state,
+                        barcode = ""
                     )
                 }
 
                 1 -> {
-                    //TODO check if user can create items and show dialog
-                    val itemByBarcode = repository.fetchItemByBarcode(barcode, documentId)
-
-                    if (itemByBarcode != null) {
-                        //update item dialog
-                        repository.saveItem(
-                            itemByBarcode.copy(
-                                qtyFact = itemByBarcode.qtyFact?.plus(
-                                    1.0
-                                )
-                            )
-                        )
+                    if (item != null) {
                         copy(
-                            document = repository.fetchDocumentById(documentId),
+                            dialogUpdateItemState = state,
                             barcode = ""
                         )
                     } else {
-                        copy(
-                            dialogItemCreationVisible = true
-                        )
+                        if (cacheManager.createItemIfNotExists) {
+                            copy(
+                                dialogItemCreationVisible = true
+                            )
+                        } else copy(error = true)
                     }
                 }
 
-                else -> copy(barcode = "", error = true)
+                else -> copy(barcode = "NOT FOUND", error = true)
             }
         }
     }
+}
+
+fun DocumentItem.createStateByItem(canEditItemName: Boolean): UpdateItemDialogState {
+    return UpdateItemDialogState(
+        id = id,
+        itemName = name ?: "",
+        isNameEditable = canEditItemName,
+        qtyFact = qtyFact,
+        qtyBalance = qtyBalance,
+        barcode = barcode ?: "",
+        count = qtyFact,
+        price = price,
+        unitType = unit,
+        isMode3 = false
+    )
 }
 

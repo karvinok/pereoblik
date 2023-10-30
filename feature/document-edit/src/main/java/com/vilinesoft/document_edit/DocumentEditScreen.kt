@@ -214,13 +214,16 @@ fun DocumentEditPreview() {
                 barcode = "123",
                 dialogItemCreationVisible = false,
                 dialogUpdateItemState = UpdateItemDialogState(
+                    id = "",
                     itemName = "Name",
+                    barcode = "",
                     isNameEditable = false,
                     qtyFact = 1.0,
                     qtyBalance = 1.0,
                     count = 1.0,
                     price = 1.0,
-                    unitType = "шт"
+                    unitType = "шт",
+                    isMode3 = false
                 )
             ),
             modifier = Modifier,

@@ -2,10 +2,12 @@ package com.vilinesoft.document_edit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,14 +16,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import com.vilinesoft.document_edit.DocumentEditContract.UpdateItemDialogIntent
+import com.vilinesoft.document_edit.DocumentEditContract.UpdateItemDialogIntent.DialogConfirmClick
+import com.vilinesoft.document_edit.DocumentEditContract.UpdateItemDialogIntent.DialogDismiss
+import com.vilinesoft.document_edit.DocumentEditContract.UpdateItemDialogIntent.NameChanged
 import com.vilinesoft.domain.util.toDoubleString
 import com.vilinesoft.ui.components.Button
 import com.vilinesoft.ui.components.TextField
+import com.vilinesoft.ui.components.clickableNoIndication
 import com.vilinesoft.ui.theme.FontSize
 import com.vilinesoft.ui.theme.LargeShape
 import com.vilinesoft.ui.theme.PereoblikTheme
@@ -29,12 +35,26 @@ import com.vilinesoft.ui.theme.PereoblikTheme
 @Composable
 internal fun ItemUpdateDialog(
     state: DocumentEditContract.UpdateItemDialogState,
-    onIntent: (DocumentEditContract.UIIntent) -> Unit
+    onIntent: (UpdateItemDialogIntent) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Dialog(onDismissRequest = { onIntent(DocumentEditContract.UpdateItemDialogIntent.DialogDismiss) }) {
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .clickableNoIndication {
+                onIntent(DialogDismiss)
+            }
+            .background(
+                color = Color.Black.copy(0.5f)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
+                .clickableNoIndication()
+                .padding(16.dp)
                 .background(
                     color = MaterialTheme.colorScheme.background,
                     shape = LargeShape
@@ -47,11 +67,7 @@ internal fun ItemUpdateDialog(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 value = state.itemName,
                 onValueChange = {
-                    onIntent(
-                        DocumentEditContract.UpdateItemDialogIntent.NameChanged(
-                            it.text
-                        )
-                    )
+                    onIntent(NameChanged(it.text))
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -101,7 +117,8 @@ internal fun ItemUpdateDialog(
                     modifier = Modifier
                         .defaultMinSize(minWidth = 50.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.secondary,
+                            color = if (state.isMode3) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.secondary,
                             shape = MaterialTheme.shapes.small
                         )
                         .padding(
@@ -116,7 +133,7 @@ internal fun ItemUpdateDialog(
                     modifier = Modifier.defaultMinSize(minWidth = 50.dp),
                     fontSize = FontSize.extraLarge,
                     textAlign = TextAlign.Center,
-                    text = state.unitType?: ""
+                    text = state.unitType ?: ""
                 )
             }
             Button(
@@ -124,10 +141,9 @@ internal fun ItemUpdateDialog(
                 backgroundColor = MaterialTheme.colorScheme.outline,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .fillMaxWidth()
-            ) {
-                onIntent(DocumentEditContract.UpdateItemDialogIntent.DialogConfirmClick)
-            }
+                    .fillMaxWidth(),
+                onClick = { onIntent(DialogConfirmClick) }
+            )
         }
     }
 }
@@ -139,13 +155,16 @@ fun ItemUpdateDialogPreview() {
     PereoblikTheme {
         ItemUpdateDialog(
             state = DocumentEditContract.UpdateItemDialogState(
-                "",
-                false,
-                9.0,
-                12.0,
-                323.0,
-                44.50,
-                "шт",
+                id = "",
+                itemName = "",
+                isNameEditable = false,
+                qtyFact = 9.0,
+                qtyBalance = 12.0,
+                count = 323.0,
+                price = 44.50,
+                barcode = "",
+                unitType = "шт",
+                isMode3 = false
             ),
             onIntent = {}
         )
